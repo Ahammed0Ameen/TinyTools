@@ -533,7 +533,7 @@ const PAGES = {
     <h2>No warranty</h2><p>The tools are provided "as is". We work to make results accurate, but calculators and converters can contain mistakes, so double-check anything important such as medical, legal or financial figures.</p>
     <h2>Changes</h2><p>We may change or remove tools and update these terms at any time.</p>`),
   contact: () => legal('Contact', 'Get in touch with the TinyTools team.', '/contact', `<p class="muted" style="margin-top:16px;font-size:1.1rem">Questions, bug reports or ideas for new tools? Send an email.</p>
-    <p><a class="btn" href="mailto:hello@example.com">hello@example.com</a></p><p><mark class="ph">Placeholder: replace this address (in script.js and here) with your real contact email before launch.</mark></p>`)
+    <p><a class="btn" href="mailto:hello@example.com">recallpdf.gmail.com</a></p><p><mark class="ph"></mark></p>`)
 };
 
 function render() {
