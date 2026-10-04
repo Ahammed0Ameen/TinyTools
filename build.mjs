@@ -221,7 +221,7 @@ page('terms', 'Terms', 'Terms of use for TinyTools.', `<p class="muted">Last upd
 <h2>No warranty</h2><p>The tools are provided "as is". We work to make results accurate, but calculators and converters can contain mistakes, so double-check anything important such as medical, legal or financial figures.</p>
 <h2>Changes</h2><p>We may change or remove tools and update these terms at any time.</p>`);
 page('contact', 'Contact', 'Get in touch with the TinyTools team.', `<p class="muted" style="margin-top:16px;font-size:1.1rem">Questions, bug reports or ideas for new tools? Send an email.</p>
-<p><a class="btn" href="mailto:recallpdf@gmail.com">recallpdf@gmail.com</a></p><p><mark class="ph"></p>`);
+<p><a class="btn" href="mailto:recallpdf@gmail.com">recallpdf@gmail.com</a></p>`);
 
 add('/404', shell({ title: 'Page not found – TinyTools', desc: 'This page could not be found.', p: '/404', noindex: true,
   body: `<div class="wrap legal"><h1>Page not found</h1><p class="muted">That page doesn't exist. Head back to the <a href="/tools">tools</a> or the <a href="/">homepage</a>.</p></div>` }), false);
