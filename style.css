@@ -114,3 +114,9 @@ dialog::backdrop{background:rgba(10,14,20,.5)}.sd-in{padding:10px 16px 14px}.sd-
 #toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:500;opacity:0;pointer-events:none;transition:.25s;z-index:60;max-width:calc(100% - 32px)}
 #toast.show{opacity:1;transform:translate(-50%,0)}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+/* prose, articles, extras */
+.prose{max-width:68ch}.prose h2{margin:32px 0 10px;font-size:1.35rem}.prose p,.prose li{font-size:1.04rem}.prose li{margin-bottom:6px}
+.prose a:not(.btn){color:var(--accent);text-underline-offset:3px}
+.cat-h{margin:28px 0 14px;font-size:1.3rem}.meta{color:var(--muted);font-size:.9rem}
+.callout{background:var(--soft);border-radius:16px;padding:18px 20px;margin:28px 0;display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}.callout p{margin:0;font-weight:500}
+.cross{margin-top:14px}.cross a{color:var(--accent);font-weight:600}

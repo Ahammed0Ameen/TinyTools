@@ -3,7 +3,6 @@
    External libraries (loaded only when a tool needs them, from cdnjs):
    - qrcode-generator (QR Code Generator)
    - PDF.js (PDF to Images) */
-const SITE = 'https://tinytools.example'; // REPLACE with your real domain
 const QR_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js';
 const PDF_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
 const PDF_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -14,65 +13,7 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;'
 const UX = m => Object.assign(new Error(m), { ux: 1 });
 const msg = e => (e && e.ux ? e.message : 'Something went wrong. Please try again.');
 
-const IC = {
-  image: '<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M4 18l5-5 4 4 3-3 4 4"/>',
-  resize: '<path d="M4 9V4h5M20 15v5h-5M4 4l6 6M20 20l-6-6"/>',
-  qr: '<rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h3v3h3M14 20h2"/>',
-  pdf: '<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 14h6M10 17h4"/>',
-  text: '<path d="M5 6h14M5 11h14M5 16h9"/>',
-  percent: '<path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.2"/><circle cx="17" cy="17" r="2.2"/>',
-  unit: '<path d="M4 8h13l-3-3M20 16H7l3 3"/>',
-  cal: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
-  arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
-  upload: '<path d="M12 16V4M7 9l5-5 5 5M5 20h14"/>',
-  lock: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'
-};
-const ico = n => `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
 
-const CATS = ['Images', 'PDF', 'Text', 'Calculators', 'Converters', 'Generators'];
-const TOOLS = [
-  { id: 'image-compressor', name: 'Image Compressor', cat: 'Images', icon: 'image', desc: 'Shrink image file sizes in your browser.',
-    seo: 'Compress images online for free without uploading them to a server. Choose a quality level and download a smaller JPEG or WebP.',
-    kw: 'compress image photo reduce size shrink optimize jpeg jpg png webp smaller',
-    how: ['Drop an image or click to choose one.', 'Pick a quality level and output format.', 'Compare file sizes, then download the result.'],
-    faq: [['Is my image uploaded anywhere?', 'No. The image is compressed by your browser using a canvas, and it is not sent to a server by this tool.'], ['Why is PNG not an option?', 'Browsers only apply quality settings to JPEG and WebP. Transparent areas in PNG files become white in JPEG output; WebP keeps transparency.']] },
-  { id: 'image-resizer', name: 'Image Resizer', cat: 'Images', icon: 'resize', desc: 'Set exact dimensions or use social presets.',
-    seo: 'Resize images to exact dimensions online. Use presets for Instagram, YouTube and more, lock the aspect ratio, and download as PNG, JPEG or WebP.',
-    kw: 'resize image dimensions scale crop width height instagram youtube thumbnail profile picture hd',
-    how: ['Upload an image.', 'Enter a width and height, or tap a preset.', 'Click Resize image, then download.'],
-    faq: [['What does "Crop to fill" do?', 'It scales the image to cover the target size and trims the overflow, so nothing looks stretched.'], ['What is the largest size I can make?', 'Up to 8000 × 8000 pixels. Very large images may fail on phones with limited memory.']] },
-  { id: 'qr-code-generator', name: 'QR Code Generator', cat: 'Generators', icon: 'qr', desc: 'Make QR codes for text, links and Wi-Fi.',
-    seo: 'Generate QR codes for text, URLs and Wi-Fi networks. Pick colors, size and error correction, then download a PNG.',
-    kw: 'qr code generator barcode link url wifi wi-fi text scan', isNew: 1,
-    how: ['Choose Text, URL or Wi-Fi.', 'Enter your content. The code updates as you type.', 'Adjust size and colors, then download the PNG.'],
-    faq: [['Which error correction level should I use?', 'Medium suits most cases. Higher levels survive more damage but make the code denser.'], ['Will it scan?', 'Keep strong contrast between the foreground and background colors, with the darker color in front.']] },
-  { id: 'pdf-to-images', name: 'PDF to Images', cat: 'PDF', icon: 'pdf', desc: 'Turn PDF pages into PNG or JPG files.',
-    seo: 'Convert PDF pages to PNG or JPG images in your browser. Select pages, preview them, and download each image.',
-    kw: 'pdf to image convert pages png jpg jpeg extract document', isNew: 1,
-    how: ['Upload a PDF.', 'Tick the pages you want.', 'Choose a format and quality, convert, then download the images.'],
-    faq: [['Is the PDF uploaded?', 'No. The PDF is read and drawn by PDF.js inside your browser.'], ['Can I download everything at once?', 'Yes, "Download all" saves each image in turn. Your browser may ask permission to allow multiple downloads.']] },
-  { id: 'word-counter', name: 'Word Counter', cat: 'Text', icon: 'text', desc: 'Count words, characters and reading time.',
-    seo: 'Count words, characters, sentences and paragraphs as you type, and see an estimated reading time.',
-    kw: 'word counter character count sentences paragraphs reading time text length',
-    how: ['Type or paste your text.', 'Watch the counts update instantly.', 'Use Copy or Clear when you are done.'],
-    faq: [['How is reading time estimated?', 'It assumes about 200 words per minute, which is a typical silent reading speed.'], ['Is my text saved?', 'No. It stays in the page and disappears when you close or reload it.']] },
-  { id: 'percentage-calculator', name: 'Percentage Calculator', cat: 'Calculators', icon: 'percent', desc: 'Percent of, change, and discounts.',
-    seo: 'Calculate percentages online: percent of a number, percentage change, increase, decrease and discounts, with the working shown.',
-    kw: 'percentage percent calculator discount increase decrease change sale',
-    how: ['Pick the kind of calculation.', 'Enter your two numbers.', 'Press Calculate to see the result and how it was worked out.'],
-    faq: [['How is percentage change calculated?', '(new − old) ÷ old × 100. The old value must not be zero.'], ['How is a discount applied?', 'The discount amount is price × percent ÷ 100, and the final price is the price minus that amount.']] },
-  { id: 'unit-converter', name: 'Unit Converter', cat: 'Converters', icon: 'unit', desc: 'Length, weight, temperature, data and more.',
-    seo: 'Convert length, weight, temperature, area, volume, speed, time and data units instantly.',
-    kw: 'unit converter length weight temperature area volume speed time data km miles kg pounds celsius fahrenheit mb gb',
-    how: ['Choose a category.', 'Pick the From and To units.', 'Type a value. The result updates instantly.'],
-    faq: [['Are gallons US or UK?', 'The converter uses US gallons, quarts, cups and fluid ounces.'], ['Is a KB 1000 or 1024 bytes?', 'KB, MB and GB are decimal (1000). KiB, MiB and GiB are binary (1024).']] },
-  { id: 'age-calculator', name: 'Age Calculator', cat: 'Calculators', icon: 'cal', desc: 'Exact age and days to your next birthday.',
-    seo: 'Work out your exact age in years, months and days, plus your next birthday. Your date of birth never leaves your browser.',
-    kw: 'age calculator birthday date of birth years months days', isNew: 1,
-    how: ['Pick your date of birth.', 'Press Calculate age.', 'See your age and your next birthday.'],
-    faq: [['Is my date of birth stored?', 'No. It is calculated on your device and not saved or sent anywhere.'], ['What if I was born on 29 February?', 'In non-leap years the birthday is counted as 1 March.']] }
-];
-const tool = id => TOOLS.find(t => t.id === id);
 
 /* ---------- helpers ---------- */
 let toastT;
@@ -440,16 +381,7 @@ UI['age-calculator'] = {
   }
 };
 
-/* ---------- views ---------- */
-const card = t => `<a class="card" href="#/tools/${t.id}"><span class="tico">${ico(t.icon)}</span><span class="go">${ico('arrow')}</span><h3>${t.name}${t.isNew ? '<span class="badge">New</span>' : ''}</h3><p>${t.desc}</p></a>`;
-function setMeta(title, desc, path) {
-  document.title = title;
-  $('meta[name=description]').content = desc;
-  $('meta[property="og:title"]').content = title; $('meta[property="og:description"]').content = desc;
-  $('meta[property="og:url"]').content = SITE + path; $('link[rel=canonical]').href = SITE + path;
-}
-const crumbs = (...c) => `<nav class="crumbs" aria-label="Breadcrumb"><a href="#/">Home</a>${c.map(x => ` <span aria-hidden="true">→</span> ${x[1] ? `<a href="${x[1]}">${x[0]}</a>` : `<span aria-current="page">${x[0]}</span>`}`).join('')}</nav>`;
-
+/* ---------- page enhancements (pages are pre-built as static HTML by build.mjs) ---------- */
 function search(q) {
   q = q.trim().toLowerCase(); if (!q) return [];
   return TOOLS.map(t => ({ t, s: (t.name.toLowerCase().includes(q) ? 3 : 0) + (t.kw.split(' ').some(k => k.startsWith(q)) ? 2 : 0) + (t.kw.includes(q) || t.desc.toLowerCase().includes(q) || t.cat.toLowerCase().includes(q) ? 1 : 0) }))
@@ -458,92 +390,33 @@ function search(q) {
 function bindSearch(input, out, after) {
   const show = () => {
     const q = input.value, res = search(q);
-    out.innerHTML = !q.trim() ? '' : res.length ? res.map(t => `<a class="res-item" href="#/tools/${t.id}"><span class="tico" style="width:36px;height:36px;border-radius:10px">${ico(t.icon)}</span><span><strong>${t.name}</strong><small>${t.desc}</small></span></a>`).join('') : `<p class="res-none">No tools match "${esc(q)}". Try "image" or "pdf".</p>`;
+    out.innerHTML = !q.trim() ? '' : res.length ? res.map(t => `<a class="res-item" href="/${t.id}"><span class="tico" style="width:36px;height:36px;border-radius:10px">${ico(t.icon)}</span><span><strong>${t.name}</strong><small>${t.desc}</small></span></a>`).join('') : `<p class="res-none">No tools match "${esc(q)}". Try "image" or "pdf".</p>`;
   };
   input.addEventListener('input', show);
   input.addEventListener('keydown', e => {
-    if (e.key === 'Enter') { const t = search(input.value)[0]; if (t) { location.hash = '#/tools/' + t.id; input.value = ''; out.innerHTML = ''; after && after(); } }
+    if (e.key === 'Enter') { const t = search(input.value)[0]; if (t) location.href = '/' + t.id; }
     if (e.key === 'Escape') { input.value = ''; out.innerHTML = ''; }
   });
-  out.addEventListener('click', e => { if (e.target.closest('a')) { input.value = ''; setTimeout(() => out.innerHTML = '', 0); after && after(); } });
 }
-
-function home() {
-  setMeta('TinyTools – Free online tools that run in your browser', 'Free, fast, browser-based tools for everyday tasks: compress and resize images, make QR codes, convert PDF pages, count words, and more. No sign-up.', '/');
-  const pop = ['image-compressor', 'qr-code-generator', 'word-counter', 'pdf-to-images'].map(tool);
-  $('#app').innerHTML = `<section class="hero"><div class="wrap">
-    <h1>Useful tools,<br>right when you need them.</h1>
-    <p class="sub">Free, fast, browser-based tools for everyday tasks.</p>
-    <div class="search-wrap"><div class="search"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
-      <input id="hs" type="search" placeholder="Search tools..." autocomplete="off" aria-label="Search tools"><kbd>Ctrl K</kbd></div><div id="hr" class="results" aria-live="polite"></div></div>
-    <div class="chips"><span class="muted">Try:</span>${pop.map(t => `<a class="chip" href="#/tools/${t.id}">${t.name}</a>`).join('')}</div>
-    <div class="cta"><a class="btn" href="#/tools">Explore Tools</a><button class="btn ghost" id="toPop">Popular Tools</button></div>
-  </div></section>
-  <section class="sec" id="popular"><div class="wrap"><div class="sec-head"><h2>Popular tools</h2><a href="#/tools" class="chip">See all tools</a></div><div class="grid">${TOOLS.map(card).join('')}</div></div></section>
-  <section class="sec"><div class="wrap"><div class="sec-head"><h2>Browse by category</h2></div><div class="cats">${CATS.map(c => `<div class="cat"><h3>${c}</h3>${TOOLS.filter(t => t.cat === c).map(t => `<a href="#/tools/${t.id}"><span class="tico">${ico(t.icon)}</span>${t.name}</a>`).join('')}</div>`).join('')}</div></div></section>
-  <section class="sec"><div class="wrap"><div class="sec-head"><h2>Why TinyTools?</h2></div><div class="why">
-    <div><h3>No sign-up</h3><p>Open a tool and use it. There are no accounts or passwords.</p></div>
-    <div><h3>Free to use</h3><p>Every tool is free, with no trial periods or paywalled downloads.</p></div>
-    <div><h3>Works in your browser</h3><p>Tools run on your device, so there is nothing to install.</p></div>
-    <div><h3>Fast and private</h3><p>Files are processed locally by the tool, not uploaded to our servers.</p></div></div></div></section>`;
-  bindSearch($('#hs'), $('#hr'));
-  $('#toPop').onclick = () => $('#popular').scrollIntoView({ behavior: 'smooth' });
-}
-
-function directory() {
-  setMeta('All tools – TinyTools', 'Browse every TinyTools utility: image, PDF, text, calculator, converter and generator tools that run in your browser.', '/tools');
-  $('#app').innerHTML = `<div class="wrap">${crumbs(['Tools'])}<div class="page-head"><h1>All tools</h1><p>Search, sort and pick a tool. Everything runs in your browser.</p></div>
-  <div class="row" style="max-width:560px"><label class="f">Search<input type="search" id="q" placeholder="Search tools..." autocomplete="off"></label><label class="f">Sort by<select id="sort"><option value="popular">Popular</option><option value="new">New</option><option value="cat">Category</option></select></label></div>
-  <div id="list" style="padding-bottom:24px"></div></div>`;
-  const draw = () => {
-    const q = $('#q').value, s = $('#sort').value; let list = q.trim() ? search(q) : TOOLS.slice();
-    if (s === 'new') list.sort((a, b) => (b.isNew || 0) - (a.isNew || 0));
-    $('#list').innerHTML = !list.length ? `<p class="muted">No tools match "${esc(q)}". Try "image" or "pdf".</p>`
-      : s === 'cat' ? CATS.filter(c => list.some(t => t.cat === c)).map(c => `<h2 style="margin:28px 0 14px;font-size:1.3rem">${c}</h2><div class="grid">${list.filter(t => t.cat === c).map(card).join('')}</div>`).join('')
-      : `<div class="grid">${list.map(card).join('')}</div>`;
-  };
-  $('#q').oninput = draw; $('#sort').onchange = draw; draw();
-}
-
-function toolPage(t) {
-  setMeta(`${t.name} – Free online tool | TinyTools`, t.seo, '/tools/' + t.id);
-  const rel = [...TOOLS.filter(x => x.cat === t.cat && x !== t), ...TOOLS.filter(x => x.cat !== t.cat && x !== t)].slice(0, 3);
-  $('#app').innerHTML = `<div class="wrap">${crumbs(['Tools', '#/tools'], [t.name])}
-  <div class="page-head"><h1>${t.name}</h1><p>${t.seo}</p></div>
-  <section class="panel" id="tool" aria-label="${t.name}">${UI[t.id].html()}</section>
-  <div class="two"><section><h2 style="margin-bottom:14px">How to use</h2><ol class="how">${t.how.map(h => `<li>${h}</li>`).join('')}</ol></section>
-  <section><h2 style="margin-bottom:8px">FAQ</h2>${t.faq.map(f => `<details><summary>${f[0]}</summary><p>${f[1]}</p></details>`).join('')}</section></div>
-  <section class="sec" style="padding-top:0"><h2 style="margin-bottom:18px">Related tools</h2><div class="grid">${rel.map(card).join('')}</div></section></div>`;
-  Promise.resolve(UI[t.id].init($('#tool'))).catch(() => toast('Something went wrong. Please try again.'));
-}
-
-const legal = (title, desc, path, body) => { setMeta(`${title} – TinyTools`, desc, path); $('#app').innerHTML = `<div class="wrap">${crumbs([title])}<div class="legal"><h1>${title}</h1>${body}</div></div>`; };
-const PAGES = {
-  about: () => legal('About', 'TinyTools is a collection of simple browser-based utilities designed to solve small everyday problems quickly.', '/about',
-    `<p class="muted" style="margin-top:16px;font-size:1.1rem">TinyTools is a collection of simple browser-based utilities designed to solve small everyday problems quickly.</p><p>There are no accounts, no paid APIs and no clutter. Each tool does one job, and most run entirely on your device.</p><p><a class="btn" href="#/tools">Explore Tools</a></p>`),
-  privacy: () => legal('Privacy', 'How TinyTools handles your files and data.', '/privacy', `<p class="muted">Last updated: 2026</p>
-    <h2>Your files</h2><p>The image, PDF, text, calculator and converter tools are designed to process your input in your browser. The files and text you use with them are not uploaded to a TinyTools server.</p>
-    <h2>What we don't collect</h2><p>TinyTools has no accounts and does not ask for personal information. This version includes no analytics or advertising cookies.</p>
-    <h2>Stored on your device</h2><p>Your light/dark theme choice is saved in your browser's local storage. Nothing else is saved.</p>
-    <h2>Third-party requests</h2><p>Fonts load from Google Fonts. The QR Code Generator and PDF to Images tools load a small open-source library from cdnjs the first time you open them. Those services can see your IP address and browser details when they serve these files, as with any website resource. Your own files and text are not sent to them.</p>
-    <h2>Hosting</h2><p>Whoever hosts this site (for example Vercel or Cloudflare) may keep standard server logs. Check their policy for details.</p>
-    <h2>Questions</h2><p>See the <a href="#/contact">contact page</a>.</p>`),
-  terms: () => legal('Terms', 'Terms of use for TinyTools.', '/terms', `<p class="muted">Last updated: 2026</p>
-    <h2>Use of the tools</h2><p>TinyTools is free to use. You are responsible for the files and content you process and for having the right to use them.</p>
-    <h2>No warranty</h2><p>The tools are provided "as is". We work to make results accurate, but calculators and converters can contain mistakes, so double-check anything important such as medical, legal or financial figures.</p>
-    <h2>Changes</h2><p>We may change or remove tools and update these terms at any time.</p>`),
-  contact: () => legal('Contact', 'Get in touch with the TinyTools team.', '/contact', `<p class="muted" style="margin-top:16px;font-size:1.1rem">Questions, bug reports or ideas for new tools? Send an email.</p>
-    <p><a class="btn" href="mailto:hello@example.com">recallpdf.gmail.com</a></p><p><mark class="ph"></mark></p>`)
-};
-
-function render() {
-  const p = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
-  window.scrollTo(0, 0); $('#nav').classList.remove('open'); $('#burger').setAttribute('aria-expanded', 'false');
-  if (!p.length) home();
-  else if (p[0] === 'tools' && !p[1]) directory();
-  else if (p[0] === 'tools' && tool(p[1])) toolPage(tool(p[1]));
-  else if (PAGES[p[0]] && p.length === 1) PAGES[p[0]]();
-  else { setMeta('Page not found – TinyTools', 'This page could not be found.', '/'); $('#app').innerHTML = `<div class="wrap legal"><h1>Page not found</h1><p class="muted">That page doesn't exist. Head back to the <a href="#/tools">tools</a> or the <a href="#/">homepage</a>.</p></div>`; }
+function boot() {
+  const hs = $('#hs'); if (hs) bindSearch(hs, $('#hr'));
+  const tp = $('#toPop'); if (tp) tp.onclick = () => $('#popular').scrollIntoView({ behavior: 'smooth' });
+  const list = $('#list'), q = $('#q'), sort = $('#sort');
+  if (list && q && sort) {
+    const draw = () => {
+      const s = sort.value; let l = q.value.trim() ? search(q.value) : TOOLS.slice();
+      if (s === 'new') l.sort((a, b) => (b.isNew || 0) - (a.isNew || 0));
+      list.innerHTML = !l.length ? `<p class="muted">No tools match "${esc(q.value)}". Try "image" or "pdf".</p>`
+        : s === 'cat' ? CATS.filter(c => l.some(t => t.cat === c)).map(c => `<h2 class="cat-h">${c}</h2><div class="grid">${l.filter(t => t.cat === c).map(card).join('')}</div>`).join('')
+        : `<div class="grid">${l.map(card).join('')}</div>`;
+    };
+    q.oninput = draw; sort.onchange = draw;
+  }
+  const tl = $('#tool');
+  if (tl && UI[tl.dataset.tool]) {
+    const u = UI[tl.dataset.tool]; tl.innerHTML = u.html();
+    Promise.resolve(u.init(tl)).catch(() => toast('Something went wrong. Please try again.'));
+  }
 }
 
 /* ---------- global UI ---------- */
@@ -562,5 +435,4 @@ $('#theme').onclick = () => {
   document.documentElement.dataset.theme = t; try { localStorage.setItem('tt-theme', t); } catch (e) { }
 };
 $('#burger').onclick = () => { const o = $('#nav').classList.toggle('open'); $('#burger').setAttribute('aria-expanded', o); };
-window.addEventListener('hashchange', render);
-render();
+boot();
