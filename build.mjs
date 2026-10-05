@@ -115,7 +115,7 @@ ${body}
 <footer class="site">
   <div class="wrap foot">
     <div><strong class="brand-name">TinyTools</strong><p class="muted">Small tools. Big convenience.</p></div>
-    <nav aria-label="Footer"><a href="/tools">Tools</a><a href="/articles">Articles</a><a href="/about">About</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/contact">Contact</a></nav>
+    <nav aria-label="Footer"><a href="/tools">Tools</a><a href="/articles">Articles</a><a href="/about">About</a><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/contact">Contact</a><a href="/support">Support</a></nav>
     <p class="muted copy">© 2026 TinyTools</p>
   </div>
 </footer>
@@ -222,6 +222,15 @@ page('terms', 'Terms', 'Terms of use for TinyTools.', `<p class="muted">Last upd
 <h2>Changes</h2><p>We may change or remove tools and update these terms at any time.</p>`);
 page('contact', 'Contact', 'Get in touch with the TinyTools team.', `<p class="muted" style="margin-top:16px;font-size:1.1rem">Questions, bug reports or ideas for new tools? Send an email.</p>
 <p><a class="btn" href="mailto:recallpdf@gmail.com">recallpdf@gmail.com</a></p>`);
+
+page('support', 'Support TinyTools', 'TinyTools is free to use. If it saved you time, you can support it with a small UPI payment. Completely optional.',
+  `<p class="muted" style="margin-top:16px;font-size:1.1rem">TinyTools is free and always will be. If it saved you time and you'd like to chip in, you can send a small amount by UPI. It's completely optional and appreciated.</p>
+<div class="panel" style="max-width:460px;margin:24px 0" id="upi" data-upi="9656264472@fam">
+<p style="margin:0 0 4px" class="muted">UPI ID</p><p style="margin:0 0 16px;font:700 1.3rem var(--display);overflow-wrap:anywhere">9656264472@fam</p>
+<div class="row btns"><button class="btn" id="upiCopy" type="button">Copy UPI ID</button><a class="btn ghost" href="upi://pay?pa=9656264472@fam&pn=TinyTools&cu=INR">Open in UPI app</a></div>
+<div class="qr-out" style="margin-top:18px"><canvas id="upiQr" hidden></canvas><p class="muted" id="upiHint" style="margin:0;text-align:center">Loading QR code…</p></div>
+<p class="note">On a phone, tap "Open in UPI app". On a computer, scan the QR code with your payment app and enter any amount.</p></div>
+<p class="muted">Thank you. Support is never required to use any tool.</p>`);
 
 add('/404', shell({ title: 'Page not found – TinyTools', desc: 'This page could not be found.', p: '/404', noindex: true,
   body: `<div class="wrap legal"><h1>Page not found</h1><p class="muted">That page doesn't exist. Head back to the <a href="/tools">tools</a> or the <a href="/">homepage</a>.</p></div>` }), false);

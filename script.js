@@ -412,6 +412,21 @@ function boot() {
     };
     q.oninput = draw; sort.onchange = draw;
   }
+  const up = $('#upi');
+  if (up) {
+    $('#upiCopy').onclick = async () => {
+      try { await navigator.clipboard.writeText(up.dataset.upi); toast('UPI ID copied.'); }
+      catch { toast('Copy it manually: ' + up.dataset.upi); }
+    };
+    loadScript(QR_SRC).then(() => {
+      qrcode.stringToBytes = s => Array.from(new TextEncoder().encode(s));
+      const q = qrcode(0, 'M'); q.addData(`upi://pay?pa=${up.dataset.upi}&pn=TinyTools&cu=INR`); q.make();
+      const n = q.getModuleCount(), cell = Math.floor(280 / (n + 8)), px = cell * (n + 8), cv = $('#upiQr'), x = cv.getContext('2d');
+      cv.width = cv.height = px; x.fillStyle = '#fff'; x.fillRect(0, 0, px, px); x.fillStyle = '#000';
+      for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) if (q.isDark(i, j)) x.fillRect((j + 4) * cell, (i + 4) * cell, cell, cell);
+      cv.hidden = false; $('#upiHint').hidden = true;
+    }).catch(() => { $('#upiHint').textContent = 'The QR code could not load. You can still copy the UPI ID above.'; });
+  }
   const tl = $('#tool');
   if (tl && UI[tl.dataset.tool]) {
     const u = UI[tl.dataset.tool]; tl.innerHTML = u.html();
